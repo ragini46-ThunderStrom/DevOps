@@ -1,7 +1,7 @@
 pipeline {
   agent any
   environment {
-    IMAGE_NAME = "devops-demo"
+    IMAGE_NAME = "ragini46/devops-demo"
   }
   stages {
     stage('Checkout') {
