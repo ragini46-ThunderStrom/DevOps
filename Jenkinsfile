@@ -3,17 +3,12 @@ pipeline {
   stages {
     stage('Checkout') {
       steps {
-        echo 'Code checked out'
+        checkout scm
       }
     }
-    stage('Build') {
+    stage('Build Docker Image') {
       steps {
-        echo 'Building ........'
-      }
-    }
-    stage('Test') {
-      steps {
-        echo 'Running tests'
+        sh 'docker build -t myapp:1.0 .'
       }
     }
   }
