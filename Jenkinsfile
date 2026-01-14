@@ -30,6 +30,18 @@ pipeline {
         sh 'docker push $IMAGE_NAME:latest'
       }
     }
+    stage('Deploy to EC2') {
+      steps {
+        sh '''
+        ssh ubuntu@16.112.57.107 "
+        docker pull ragini46/devops-demo:latest
+        docker stop app || true
+        docker rm app || true
+        docker run -d --name app -p 5000:5000 ragini46/devops-demo:latest
+        "
+        '''
+      }
+    }
   }
 }
 
