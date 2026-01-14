@@ -35,7 +35,7 @@ pipeline {
     stage('Deploy to EC2') {
       steps {
         sh '''
-        ssh $EC2_USER@$EC2_IP '
+        ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_IP '
         CONTAINER=\$(docker ps -aq -f name=app)
         if [ ! -z "\$CONTAINER" ]; then
           docker stop app
