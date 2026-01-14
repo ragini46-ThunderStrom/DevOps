@@ -2,10 +2,6 @@ pipeline {
   agent any
   environment {
     IMAGE_NAME = "ragini46/devops-demo"
-    EC2_USER = "ubuntu"
-    IMAGE_TAG = "latest"
-    FULL_IMAGE = "${IMAGE_NAME}:{IMAGE_TAG}"
-    EC2_IP = "16.112.109.15"
   }
   stages {
     stage('Checkout') {
@@ -15,7 +11,7 @@ pipeline {
     }
     stage('Build Image') {
       steps {
-        sh 'docker build -t $FULL_IMAGE .'
+        sh 'docker build -t $IMAGE_NAME:latest .'
       }
     }
     stage('Login to DockerHub') {
@@ -31,20 +27,18 @@ pipeline {
     }
     stage('push Image') {
       steps {
-        sh 'docker push $FULL_IMAGE'
+        sh 'docker push $IMAGE_NAME:latest'
       }
     }
     stage('Deploy to EC2') {
       steps {
         sh '''
-        ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_IP '
-        CONTAINER=\$(docker ps -aq -f name=app)
-        if [ ! -z "\$CONTAINER" ]; then
-          docker stop app
-          docker rm app
-        fi
+        ssh -o StrictHostKeyChecking=no ubuntu@<EC2-PUBLIC-IP> '
+        docker pull $IMAGE_NAME:latest
+        docker stop app || true
+        docker rm app || true
   
-        docker run -d --name app -p 80:5000 $FULL_IMAGE
+        docker run -d --name app -p 5000:5000 $IMAGE_NAME:latest
         '
         '''
       }
