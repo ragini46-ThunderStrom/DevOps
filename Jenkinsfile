@@ -3,6 +3,8 @@ pipeline {
   environment {
     IMAGE_NAME = "ragini46/devops-demo"
     EC2_USER = "ubuntu"
+    IMAGE_TAG = "latest"
+    FULL_IMAGE = "${IMAGE_NAME}:{IMAGE_TAG}"
     EC2_IP = "16.112.109.15"
   }
   stages {
@@ -13,7 +15,7 @@ pipeline {
     }
     stage('Build Image') {
       steps {
-        sh 'docker build -t $IMAGE_NAME:latest .'
+        sh 'docker build -t $FULL_IMAGE .'
       }
     }
     stage('Login to DockerHub') {
@@ -29,7 +31,7 @@ pipeline {
     }
     stage('push Image') {
       steps {
-        sh 'docker push $IMAGE_NAME:latest'
+        sh 'docker push $FULL_IMAGE'
       }
     }
     stage('Deploy to EC2') {
@@ -42,7 +44,7 @@ pipeline {
           docker rm app
         fi
   
-        docker run -d --name app -p 80:5000 $IMAGE_NAME:latest
+        docker run -d --name app -p 80:5000 $FULL_IMAGE
         '
         '''
       }
