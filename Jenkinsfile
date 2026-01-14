@@ -3,7 +3,7 @@ pipeline {
   environment {
     IMAGE_NAME = "ragini46/devops-demo"
     EC2_USER = "ubuntu"
-    EC2_IP = "credentials('EC2_IP')
+    EC2_IP = "<EC2-PUBLIC-IP>"
   }
   stages {
     stage('Checkout') {
