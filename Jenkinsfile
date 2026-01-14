@@ -42,7 +42,7 @@ pipeline {
           docker rm app
         fi
   
-        docker run -d --name app -p 5000:5000 $IMAGE_NAME:latest
+        docker run -d --name app -p 80:5000 $IMAGE_NAME:latest
         '
         '''
       }
