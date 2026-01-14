@@ -2,6 +2,8 @@ pipeline {
   agent any
   environment {
     IMAGE_NAME = "ragini46/devops-demo"
+    EC2_USER = "ubuntu"
+    EC2_IP = "credentials('EC2_IP')
   }
   stages {
     stage('Checkout') {
@@ -33,12 +35,15 @@ pipeline {
     stage('Deploy to EC2') {
       steps {
         sh '''
-        ssh ubuntu@16.112.57.107 "
-        docker pull ragini46/devops-demo:latest
-        docker stop app || true
-        docker rm app || true
-        docker run -d --name app -p 5000:5000 ragini46/devops-demo:latest
-        "
+        ssh $EC2_USER@$EC2_IP '
+        CONTAINER=\$(docker ps -aq -f name=app)
+        if [ ! -z "\$CONTAINER" ]; then
+          docker stop app
+          docker rm app
+        fi
+  
+        docker run -d --name app -p 5000:5000 $IMAGE_NAME:latest
+        '
         '''
       }
     }
